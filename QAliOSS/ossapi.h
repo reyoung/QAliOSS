@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "QAliOSS_global.h"
+#include "synchttp.h"
 namespace QAliOSS{
 
 class QALIOSSSHARED_EXPORT OSSApi : public QObject
@@ -30,9 +31,18 @@ public:
     void setSecretAccessKey(const QString& k);
 
 
+    Response listAllMyBuckets()const;
+
 signals:
     
 public slots:
+
+private:
+    QString _createSignForNormalAuth(const QString& method,
+                                     const QMap<QString,QString>& headers=QMap<QString,QString>(),
+                                     const QString& resource="/")const;
+
+
 
 private:
     QString m_host;

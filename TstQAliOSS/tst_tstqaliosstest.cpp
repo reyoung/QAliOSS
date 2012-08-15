@@ -17,6 +17,7 @@ private Q_SLOTS:
     void testConsForOSSApi();
     void initTestCase();
     void testSyncHttp();
+    void testListAllMyBuckets();
 private:
     QString accessId;
     QString secretAccessKey;
@@ -95,6 +96,15 @@ void TstQAliOSSTest::testSyncHttp()
     hd.setRequest("GET","/");
     Response r = h.syncRequest(hd,"");
     qDebug()<<r.Header.contentLength();
+}
+
+void TstQAliOSSTest::testListAllMyBuckets()
+{
+    QAliOSS::OSSApi api("storage.aliyun.com",this->accessId,this->secretAccessKey);
+    Response res = api.listAllMyBuckets();
+    QVERIFY(res.Ok);
+    QVERIFY(res.Header.statusCode()/100 == 2);
+    qDebug()<<res.Body;
 }
 
 #include "tst_tstqaliosstest.moc"
