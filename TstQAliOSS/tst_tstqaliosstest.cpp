@@ -2,6 +2,7 @@
 #include <QtTest>
 #include <QAliOSS/utl.h>
 #include <QAliOSS/ossapi.h>
+#include <QAliOSS/synchttp.h>
 
 class TstQAliOSSTest : public QObject
 {
@@ -15,6 +16,7 @@ private Q_SLOTS:
     void testAddParams();
     void testConsForOSSApi();
     void initTestCase();
+    void testSyncHttp();
 private:
     QString accessId;
     QString secretAccessKey;
@@ -80,6 +82,19 @@ void TstQAliOSSTest::initTestCase()
            <<" SecretAccessKey="<<secretAccessKey;
 }
 
-QTEST_APPLESS_MAIN(TstQAliOSSTest)
+QTEST_MAIN(TstQAliOSSTest)
+
+void TstQAliOSSTest::testSyncHttp()
+{
+    QVERIFY(QCoreApplication::instance()!=0);
+    SyncHttp h;
+    bool ok = h.syncSetHost("127.0.0.1",80);
+    QVERIFY(ok);
+
+    QHttpRequestHeader hd;
+    hd.setRequest("GET","/");
+    Response r = h.syncRequest(hd,"");
+    qDebug()<<r.Header.contentLength();
+}
 
 #include "tst_tstqaliosstest.moc"

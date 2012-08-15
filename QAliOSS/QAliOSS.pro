@@ -15,12 +15,14 @@ DEFINES += QALIOSS_LIBRARY
 
 SOURCES += qalioss.cpp \
     utl.cpp \
-    ossapi.cpp
+    ossapi.cpp \
+    synchttp.cpp
 
 HEADERS += qalioss.h\
         QAliOSS_global.h \
     utl.h \
-    ossapi.h
+    ossapi.h \
+    synchttp.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
