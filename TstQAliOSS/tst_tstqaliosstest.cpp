@@ -11,6 +11,7 @@ public:
     
 private Q_SLOTS:
     void testUrlGetAuthorizationCode();
+    void testAddParams();
 };
 
 TstQAliOSSTest::TstQAliOSSTest()
@@ -36,6 +37,19 @@ void TstQAliOSSTest::testUrlGetAuthorizationCode()
                     res
                     );
         QVERIFY(result == "63mwfl+zYIOG6k95yxbgMruQ6QI=");
+    }
+}
+
+void TstQAliOSSTest::testAddParams()
+{
+    {
+        QString url="www.notuseful.com";
+        QMap<QString,QString> params;
+        params.insert("a","b");
+        params.insert("acl","");
+        params.insert("maxkeys","30");
+        QString result = QAliOSS::Utl::appendParam(url,params);
+        QVERIFY(result=="www.notuseful.com?a=b&max-keys=30&acl");
     }
 }
 

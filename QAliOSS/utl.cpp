@@ -77,6 +77,36 @@ QString Utl::getAuthorizationCode(const QString &acc_key, const QString &method,
     return hmacSha1(acc_key.toLocal8Bit(),string_to_sign.toLocal8Bit());
 }
 
+QString Utl::appendParam(const QString &url, const QMap<QString, QString> &params)
+{
+    QUrl retv(url);
+    QMapIterator<QString,QString> it(params);
+    bool aclFlag = false;
+    while(it.hasNext()){
+        it.next();
+        QString k = it.key();
+        QString v = it.value();
+        if(k=="maxkeys"){
+            k="max-keys";
+        }
+        if (!v.isNull()&&!v.isEmpty()){
+            retv.addQueryItem(k,v);
+        } else if (k=="acl"){
+            aclFlag = true;
+        }
+    }
+    QString tmp = retv.toString();
+    if(aclFlag){
+        if(retv.queryItems().size()!=0){
+            tmp+="&acl";
+        } else {
+            tmp+="?acl";
+        }
+    }
+    return tmp;
+//    return aclFlag?retv.toString()+"&acl":retv.toString();
+}
+
 
 
 }
