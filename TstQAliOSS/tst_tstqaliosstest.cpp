@@ -1,6 +1,7 @@
 #include <QString>
 #include <QtTest>
 #include <QAliOSS/utl.h>
+#include <QAliOSS/ossapi.h>
 
 class TstQAliOSSTest : public QObject
 {
@@ -12,6 +13,11 @@ public:
 private Q_SLOTS:
     void testUrlGetAuthorizationCode();
     void testAddParams();
+    void testConsForOSSApi();
+    void initTestCase();
+private:
+    QString accessId;
+    QString secretAccessKey;
 };
 
 TstQAliOSSTest::TstQAliOSSTest()
@@ -51,6 +57,27 @@ void TstQAliOSSTest::testAddParams()
         QString result = QAliOSS::Utl::appendParam(url,params);
         QVERIFY(result=="www.notuseful.com?a=b&max-keys=30&acl");
     }
+}
+
+void TstQAliOSSTest::testConsForOSSApi()
+{
+    QAliOSS::OSSApi api("www.notuseful.com","xxxfffeee","xxxeeefff");
+    QVERIFY(api.getHost()=="www.notuseful.com");
+    QVERIFY(api.getAccessID()=="xxxfffeee");
+    QVERIFY(api.getSecretAccessKey()=="xxxeeefff");
+}
+
+void TstQAliOSSTest::initTestCase()
+{
+    QFile f("key.txt");
+    if(f.open(QFile::ReadOnly)){
+        QTextStream tin(&f);
+        this->accessId = tin.readLine();
+        this->secretAccessKey = tin.readLine();
+        f.close();
+    }
+    qDebug()<<"Test With AccessID="<<accessId
+           <<" SecretAccessKey="<<secretAccessKey;
 }
 
 QTEST_APPLESS_MAIN(TstQAliOSSTest)

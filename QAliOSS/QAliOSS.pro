@@ -14,11 +14,13 @@ TEMPLATE = lib
 DEFINES += QALIOSS_LIBRARY
 
 SOURCES += qalioss.cpp \
-    utl.cpp
+    utl.cpp \
+    ossapi.cpp
 
 HEADERS += qalioss.h\
         QAliOSS_global.h \
-    utl.h
+    utl.h \
+    ossapi.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
