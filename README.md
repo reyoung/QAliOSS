@@ -1,0 +1,1 @@
+(阿里开放云存储)[http://www.aliyun.com/product/oss]Qt/C++的SDK。尚在开发中。纯粹个人项目。
