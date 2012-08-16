@@ -55,7 +55,23 @@ public:
             int timeout=60
             )const;
 
-signals:
+    //! Send bucket operation request
+    //! @param method, one of PUT, GET, DELETE, HEAD
+    //! @param bucket_name
+    //! @param headers, HTTP header
+    //! @param params, parameters that will be appeded at the end of resource
+    //! @return HTTP Response
+    //! @note port form oss_api.py:bucket_operation
+    Response doBucketOperation(const QString& method,
+                               const QString& bucket_name,
+                               const QMap<QString,QString>& headers=QMap<QString,QString>(),
+                               const QMap<QString,QString>& params=QMap<QString,QString>())const;
+
+    //! Get Access Control Level of bucket
+    //! @param bucket name
+    //! @return HTTP Response
+    //! @note port from oss_api.py:get_bucket_acl
+    Response getBucketAcl(const QString& bucket_name)const;
     
 public slots:
 
@@ -64,7 +80,10 @@ private:
                                      const QMap<QString,QString>& headers=QMap<QString,QString>(),
                                      const QString& resource="/")const;
 
+    QString getGMT() const;
 
+    void insertAuthorization(QString method, QMap<QString,QString>& headers, QString resource) const;
+    QHttpRequestHeader buildRequest(QString url, QString method, QMap<QString,QString> headers) const;
 
 private:
     QString m_host;

@@ -19,6 +19,7 @@ private Q_SLOTS:
     void testSyncHttp();
     void testListAllMyBuckets();
     void testSignUrlAuthWithExpireTime();
+    void testGetBucketAcl();
 private:
     QString accessId;
     QString secretAccessKey;
@@ -132,6 +133,14 @@ void TstQAliOSSTest::testSignUrlAuthWithExpireTime()
         QVERIFY(expect.queryItemValue(k.first)==k.second);
     }
     QVERIFY(expect.host()==target.host());
+}
+
+void TstQAliOSSTest::testGetBucketAcl()
+{
+    QAliOSS::OSSApi api("storage.aliyun.com",this->accessId,this->secretAccessKey);
+    Response res = api.getBucketAcl("test_sdk");
+    QVERIFY(res.Ok);
+    qDebug()<<res.Body;
 }
 
 #include "tst_tstqaliosstest.moc"

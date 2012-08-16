@@ -46,30 +46,49 @@ void OSSApi::setSecretAccessKey(const QString &k)
 
 }
 
-Response QAliOSS::OSSApi::listAllMyBuckets() const
+QString QAliOSS::OSSApi::getGMT() const
 {
-    QString method = "GET";
-    QString url = "/";
-    QString resource = "/";
     QLocale loc(QLocale::English,QLocale::UnitedStates);
     QString date =
             loc.toString(QDateTime::currentDateTime().toUTC(),
                          "ddd, dd MMM yyyy hh:mm:ss")+" GMT";
-    QMap<QString,QString> headers;
-    headers.insert("Date",date);
-    headers.insert("Host",this->getHost());
+
+    return date;
+}
+
+void QAliOSS::OSSApi::insertAuthorization(QString method, QMap<QString,QString>& headers, QString resource) const
+{
     if (!this->getAccessID().isEmpty()&&!this->getSecretAccessKey().isEmpty()){
         headers.insert("Authorization",this->_createSignForNormalAuth(method,headers,resource));
     } else if(!this->getAccessID().isEmpty()){
         headers.insert("Authorization",this->getAccessID());
     }
+}
 
+QHttpRequestHeader QAliOSS::OSSApi::buildRequest(QString url, QString method, QMap<QString,QString> headers) const
+{
     QHttpRequestHeader req(method,url);
     QMapIterator<QString,QString> it(headers);
     while(it.hasNext()){
         it.next();
         req.addValue(it.key(),it.value());
     }
+
+    return req;
+}
+
+Response QAliOSS::OSSApi::listAllMyBuckets() const
+{
+    QString method = "GET";
+    QString url = "/";
+    QString resource = "/";
+    QString date = getGMT();
+    QMap<QString,QString> headers;
+    headers.insert("Date",date);
+    headers.insert("Host",this->getHost());
+    insertAuthorization(method, headers, resource);
+
+    QHttpRequestHeader req = buildRequest(url, method, headers);
     SyncHttp h;
     bool ok = h.setHost(this->getHost(),80);
     if(!ok){
@@ -100,6 +119,41 @@ QString QAliOSS::OSSApi::signUrlAuthWithExpireTime(const QString &method, const 
     params.insert("Expires",send_time);
     params.insert("Signature",auth_value);
     return QAliOSS::Utl::appendParam(url,params);
+}
+
+Response QAliOSS::OSSApi::doBucketOperation(const QString &method, const QString &bucket_name, const QMap<QString, QString> &headers, const QMap<QString, QString> &params) const
+{
+    QString url = QAliOSS::Utl::appendParam(QString("/%1/").arg(bucket_name),params);
+    QString date = getGMT();
+
+    QMap<QString,QString> h(headers);
+    h.insert("Date",date);
+    h.insert("Host",this->getHost());
+    QString resource;
+    if (params.contains("acl")){
+        resource = QString("/%1/?acl").arg(bucket_name);
+    } else {
+        resource = QString("/%1/").arg(bucket_name);
+    }
+    this->insertAuthorization(method,h,resource);
+    QHttpRequestHeader req= this->buildRequest(url,method,h);
+
+    SyncHttp http;
+    bool ok = http.syncSetHost(this->getHost(),80);
+    if (!ok){
+        Response retv;
+        retv.Ok = false;
+        return retv;
+    }
+    return http.syncRequest(req,"");
+}
+
+Response QAliOSS::OSSApi::getBucketAcl(const QString &bucket_name) const
+{
+    QMap<QString,QString> headers;
+    QMap<QString,QString> params;
+    params.insert("acl","");
+    return this->doBucketOperation("GET",bucket_name,headers,params);
 }
 
 QString QAliOSS::OSSApi::_createSignForNormalAuth(const QString &method, const QMap<QString, QString> &headers, const QString &resource)const
