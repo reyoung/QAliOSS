@@ -156,6 +156,16 @@ Response QAliOSS::OSSApi::getBucketAcl(const QString &bucket_name) const
     return this->doBucketOperation("GET",bucket_name,headers,params);
 }
 
+Response QAliOSS::OSSApi::listBucket(const QString &bucket, const QString &prefix, const QString &marker, const QString &delimiter, const QString &maxkeys, const QMap<QString, QString> &header) const
+{
+    QMap<QString,QString> params;
+    params.insert("prefix",prefix);
+    params.insert("marker",marker);
+    params.insert("delimiter",delimiter);
+    params.insert("max-keys",maxkeys);
+    return this->doBucketOperation("GET",bucket,header,params);
+}
+
 QString QAliOSS::OSSApi::_createSignForNormalAuth(const QString &method, const QMap<QString, QString> &headers, const QString &resource)const
 {
     return QString("OSS ")+

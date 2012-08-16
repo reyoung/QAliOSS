@@ -73,6 +73,28 @@ public:
     //! @note port from oss_api.py:get_bucket_acl
     Response getBucketAcl(const QString& bucket_name)const;
     
+
+    //! List object that in bucket
+    //! @return HTTP Response
+    //! @note port from oss_api.py:list_bucket
+    Response listBucket(const QString& bucket,
+                        const QString& prefix="",
+                        const QString& marker="",
+                        const QString& delimiter="",
+                        const QString& maxkeys="",
+                        const QMap<QString,QString>& header=QMap<QString,QString>())const;
+    //! List object that in bucket
+    //! @return HTTP Response
+    //! @note port from oss_api.py:get_bucket
+    inline Response getBucket(const QString& bucket,
+                            const QString& prefix="",
+                            const QString& marker="",
+                            const QString& delimiter="",
+                            const QString& maxkeys="",
+                            const QMap<QString,QString>& header=QMap<QString,QString>())const{
+        return this->listBucket(bucket,prefix,marker,delimiter,maxkeys,header);
+    }
+
 public slots:
 
 private:
