@@ -15,7 +15,7 @@ Response SyncHttp::syncRequest(const QHttpRequestHeader &header, const QByteArra
     this->m_currentID = this->request(header,data);
 
     this->loop.exec();
-
+    this->m_respose.Header = this->lastResponse();
     this->disconnect(this,SLOT(onReadyRead(QHttpResponseHeader)));
     this->disconnect(this,SLOT(onRequestFinished(int,bool)));
     return this->m_respose;

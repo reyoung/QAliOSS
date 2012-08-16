@@ -21,6 +21,7 @@ private Q_SLOTS:
     void testSignUrlAuthWithExpireTime();
     void testGetBucketAcl();
     void testListBucket();
+    void testCreateBucket();
 private:
     QString accessId;
     QString secretAccessKey;
@@ -152,6 +153,18 @@ void TstQAliOSSTest::testListBucket()
     QVERIFY(res.Ok);
     QVERIFY(res.Header.statusCode()/100==2);
     qDebug()<<res.Body;
+}
+
+void TstQAliOSSTest::testCreateBucket()
+{
+    QAliOSS::OSSApi api("storage.aliyun.com",this->accessId,this->secretAccessKey);
+    Response res = api.createBucket("test_sdk2");
+    qDebug()<<res.Header.statusCode();
+    QVERIFY(res.Ok);
+    QVERIFY(res.Header.statusCode()/100==2);
+    res = api.deleteBucket("test_sdk2");
+    QVERIFY(res.Ok);
+    QVERIFY(res.Header.statusCode()/100==2);
 }
 
 #include "tst_tstqaliosstest.moc"

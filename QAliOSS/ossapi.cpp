@@ -166,6 +166,14 @@ Response QAliOSS::OSSApi::listBucket(const QString &bucket, const QString &prefi
     return this->doBucketOperation("GET",bucket,header,params);
 }
 
+Response QAliOSS::OSSApi::putBucket(const QString &bucket_name, const QString &acl, QMap<QString, QString> headers) const
+{
+    if (!acl.isEmpty()){
+        headers.insert("x-oss-acl",acl);
+    }
+    return this->doBucketOperation("PUT",bucket_name,headers);
+}
+
 QString QAliOSS::OSSApi::_createSignForNormalAuth(const QString &method, const QMap<QString, QString> &headers, const QString &resource)const
 {
     return QString("OSS ")+

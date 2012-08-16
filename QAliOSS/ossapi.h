@@ -95,6 +95,28 @@ public:
         return this->listBucket(bucket,prefix,marker,delimiter,maxkeys,header);
     }
 
+    //! Create bucket
+    //! @param acl, "" or "private"
+    //! @return HTTP Response
+    //! @note port from oss_api.py:create_bucket
+    inline Response createBucket(const QString& bucket_name,const QString& acl="",const QMap<QString,QString>& headers = QMap<QString,QString>())const {
+        return this->putBucket(bucket_name,acl,headers);
+    }
+
+    //! Create bucket
+    //! @param acl, "" or "private"
+    //! @return HTTP Response
+    //! @note port from oss_api.py:put_bucket
+    Response putBucket(const QString& bucket_name,const QString& acl="",QMap<QString,QString> headers = QMap<QString,QString>())const;
+
+    //! Delete bucket
+    //! @return Http response
+    //! @note port from oss_api.py:delete_bucket
+    inline Response deleteBucket(const QString& bucket_name)const{
+        return this->doBucketOperation("DELETE",bucket_name);
+    }
+
+
 public slots:
 
 private:
