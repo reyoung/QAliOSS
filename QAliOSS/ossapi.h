@@ -30,8 +30,14 @@ public:
 
     void setSecretAccessKey(const QString& k);
 
-
+    //! List all buckets of user
+    //! @note port from oss_api.py:list_all_my_buckets
     Response listAllMyBuckets()const;
+
+    //! @note port from oss_api.py:get_service
+    inline Response getService()const{
+        return this->listAllMyBuckets();
+    }
 
 signals:
     
