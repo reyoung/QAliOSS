@@ -18,6 +18,7 @@ private Q_SLOTS:
     void initTestCase();
     void testSyncHttp();
     void testListAllMyBuckets();
+    void testSignUrlAuthWithExpireTime();
 private:
     QString accessId;
     QString secretAccessKey;
@@ -105,6 +106,32 @@ void TstQAliOSSTest::testListAllMyBuckets()
     QVERIFY(res.Ok);
     QVERIFY(res.Header.statusCode()/100 == 2);
     qDebug()<<res.Body;
+}
+
+void TstQAliOSSTest::testSignUrlAuthWithExpireTime()
+{
+    QString method = "GET";
+    QString bucket = "test2012-aug-1612-04-24";
+    QString object = "test_object";
+    QString url = (QString("http://storage.aliyun.com/oss/") + bucket + "/") + object;
+    QMap<QString,QString> headers;
+    headers.insert("Date","1345089924");
+    QString resource = QString("/%1/%2").arg(bucket).arg(object);
+    int timeout = 60;
+    QAliOSS::OSSApi api("storage.aliyun.com",this->accessId,this->secretAccessKey);
+    QString result = api.signUrlAuthWithExpireTime(method,url,headers,resource,timeout);
+    qDebug()<<result;
+    //! @todo make test more good.
+    QUrl target(result);
+    QUrl expect("http://storage.aliyun.com/oss/test2012-aug-1612-04-24/test_object?OSSAccessKeyId=gs2x8c4kl1hma3i5p0u69dho&Expires=1345089924&Signature=RVpORQioAEz8Nnpyf5amK00nJ%2BU%3D");
+    QList<QPair<QString, QString> > kvs = target.queryItems();
+    QListIterator<QPair<QString,QString> > it(kvs);
+    while(it.hasNext()){
+        QPair<QString,QString> k = it.next();
+//        qDebug()<<k.first<<" "<<k.second<<" | "<<expect.queryItemValue(k.first);
+        QVERIFY(expect.queryItemValue(k.first)==k.second);
+    }
+    QVERIFY(expect.host()==target.host());
 }
 
 #include "tst_tstqaliosstest.moc"

@@ -1,5 +1,7 @@
 #include "ossapi.h"
 #include "utl.h"
+#include <stdlib.h>
+#include <time.h>
 
 namespace QAliOSS{
 OSSApi::OSSApi(const QString &host, const QString &access_id, const QString &secret_access_key, QObject *parent) :
@@ -76,6 +78,28 @@ Response QAliOSS::OSSApi::listAllMyBuckets() const
         return retv;
     }
     return h.syncRequest(req,"");
+}
+
+QString QAliOSS::OSSApi::signUrlAuthWithExpireTime(const QString &method, const QString &url, const QMap<QString, QString> &h, const QString &resource, int timeout) const
+{
+    QMap<QString,QString> headers(h);
+    QString send_time = headers.value("Date","");
+    if (send_time.isEmpty()){
+        time_t sec = time(0)+timeout;
+        send_time.setNum(sec);
+    }
+    headers["Date"]=send_time;
+    QString auth_value = QAliOSS::Utl::getAuthorizationCode(
+                this->getSecretAccessKey(),
+                method,
+                headers,
+                resource
+                );
+    QMap<QString,QString> params;
+    params.insert("OSSAccessKeyId",this->getAccessID());
+    params.insert("Expires",send_time);
+    params.insert("Signature",auth_value);
+    return QAliOSS::Utl::appendParam(url,params);
 }
 
 QString QAliOSS::OSSApi::_createSignForNormalAuth(const QString &method, const QMap<QString, QString> &headers, const QString &resource)const

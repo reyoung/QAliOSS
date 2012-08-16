@@ -39,6 +39,22 @@ public:
         return this->listAllMyBuckets();
     }
 
+    //! Create the authorization for OSS based on the input method, url, body and headers
+    //! @param method, one of PUT,GET,DELETE,HEAD
+    //! @param url, HTTP address of bucket or object, eg: http://HOST/bucket/object
+    //! @param headers, HTTP header
+    //! @param resource,path of bucket or object, eg: /bucket/ or /bucket/object
+    //! @param timeout,
+    //! @return signature url.
+    //! @note port from oss_api.py:sign_url_auth_with_expire_time
+    QString signUrlAuthWithExpireTime(
+            const QString& method,
+            const QString& url,
+            const QMap<QString,QString>& h = QMap<QString,QString>(),
+            const QString& resource="/",
+            int timeout=60
+            )const;
+
 signals:
     
 public slots:

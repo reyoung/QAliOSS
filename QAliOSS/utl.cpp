@@ -95,7 +95,7 @@ QString Utl::appendParam(const QString &url, const QMap<QString, QString> &param
             aclFlag = true;
         }
     }
-    QString tmp = retv.toString();
+    QString tmp = QString::fromLocal8Bit(retv.toEncoded());
     if(aclFlag){
         if(retv.queryItems().size()!=0){
             tmp+="&acl";
@@ -103,6 +103,8 @@ QString Utl::appendParam(const QString &url, const QMap<QString, QString> &param
             tmp+="?acl";
         }
     }
+    //! @todo, Make Encoding More good.
+    tmp.replace("+","%2B");
     return tmp;
 //    return aclFlag?retv.toString()+"&acl":retv.toString();
 }
